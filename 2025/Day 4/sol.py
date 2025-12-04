@@ -3,6 +3,71 @@ author: UG_BEAST
 """
 
 
+def main():
+    with open("input.txt") as f:
+        data = [line.strip() for line in f if line.strip()]
+
+    r = len(data)
+    c = len(data[0])
+
+    grid = ["." * (c + 2)]
+    for line in data:
+        grid.append("." + line + ".")
+    grid.append("." * (c + 2))
+
+    m, n = r + 2, c + 2
+
+    neighbors_cnt = [[0] * n for _ in range(m)]
+    dirs = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+    dkg = []
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == "@":
+                cnt = 0
+                for dx, dy in dirs:
+                    ni, nj = i + dx, j + dy
+                    if grid[ni][nj] == "@":
+                        cnt += 1
+                neighbors_cnt[i][j] = cnt
+                dkg.append((i, j))
+
+    queue = []
+    vis = set()
+
+    part_1 = 0
+    for i, j in dkg:
+        if neighbors_cnt[i][j] < 4:
+            part_1 += 1
+            queue.append((i, j))
+            vis.add((i, j))
+    print("Part 1:", part_1)
+
+    # part 2:
+    part_2 = 0
+    while queue:
+        i, j = queue.pop(0)
+        part_2 += 1
+        for dx, dy in dirs:
+            ni, nj = i + dx, j + dy
+            if (ni, nj) in vis or grid[ni][nj] != "@":
+                continue
+            neighbors_cnt[ni][nj] -= 1
+            if neighbors_cnt[ni][nj] < 4:
+                queue.append((ni, nj))
+                vis.add((ni, nj))
+    print("Part 2:", part_2)
+
+
+if __name__ == "__main__":
+    main()
+
+
+""""""
+
+"""
+NERD APPROACH
+
 def read_input():
     with open("input.txt") as f:
         return f.read().strip()
@@ -75,3 +140,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
